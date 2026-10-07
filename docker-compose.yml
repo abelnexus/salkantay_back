@@ -1,0 +1,35 @@
+services:
+  app:
+    build: .
+    container_name: salkantay-back-app
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:alpine
+    container_name: salkantay-back-nginx
+    ports:
+      - "8081:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.4
+    container_name: salkantay-back-db
+    environment:
+      MYSQL_DATABASE: salkantay
+      MYSQL_USER: salkantay
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
